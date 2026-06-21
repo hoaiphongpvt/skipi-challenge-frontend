@@ -28,10 +28,11 @@ export default function Page() {
             toast.error(err.message);
         },
     });
+    const { isPending, mutate } = verifyMutation;
     const onFinish = (values: { otp: string }) => {
         const phone = getPhone();
         if (phone) {
-            verifyMutation.mutate({
+            mutate({
                 phone: phone,
                 otp: values.otp,
             });
@@ -108,7 +109,13 @@ export default function Page() {
                         <Input size="large" placeholder="Enter Your code" />
                     </Form.Item>
 
-                    <Button type="primary" htmlType="submit" block size="large">
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        block
+                        size="large"
+                        loading={isPending}
+                    >
                         Submit
                     </Button>
                 </Form>

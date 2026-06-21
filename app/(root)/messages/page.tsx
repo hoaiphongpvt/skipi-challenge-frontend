@@ -1,7 +1,5 @@
 function Page() {
-    return ( 
-        <p>Message</p>
-     );
+    return <p>Message</p>;
 }
 
 export default Page;

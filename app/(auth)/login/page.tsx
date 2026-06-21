@@ -1,5 +1,6 @@
 'use client';
 
+import { ErrorResponse } from '@/constants/const';
 import { getOTP } from '@/services/authService';
 import { savePhone } from '@/utils/storagePhone';
 import { ArrowLeftOutlined } from '@ant-design/icons';
@@ -10,11 +11,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 const { Title, Text, Link } = Typography;
-
-interface ErrorResponse {
-    success: boolean;
-    message: string;
-}
 
 export default function Page() {
     const router = useRouter();
@@ -36,9 +32,10 @@ export default function Page() {
             );
         },
     });
+    const { isPending, mutate } = getOTPMutation;
 
     const onFinish = (values: { phoneNumber: string }) => {
-        getOTPMutation.mutate({
+        mutate({
             phone: values.phoneNumber,
         });
     };
@@ -107,7 +104,13 @@ export default function Page() {
                         <Input size="large" placeholder="Your Phone Number" />
                     </Form.Item>
 
-                    <Button type="primary" htmlType="submit" block size="large">
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        block
+                        size="large"
+                        loading={isPending}
+                    >
                         Next
                     </Button>
                 </Form>

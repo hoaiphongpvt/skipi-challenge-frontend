@@ -1,7 +1,8 @@
 'use client';
 
-import HeaderComponent from '@/components/ui/header';
-import SidebarComponent from '@/components/ui/sidebar';
+import HeaderComponent from '@/components/layout/header';
+import SidebarComponent from '@/components/layout/sidebar';
+import Loading from '@/components/ui/loading';
 import { useUserStore } from '@/store/userStore';
 import { Layout } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -15,21 +16,18 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const user = useUserStore((state) => state.user);
-    const hydrated = useUserStore.persist.hasHydrated();
+    const _hasHydrated = useUserStore((state) => state._hasHydrated);
     const router = useRouter();
 
     useEffect(() => {
-        if (!user) {
-            router.push('/login');
+        if (!_hasHydrated) return;
+        if (user === null) {
+            router.replace('/login');
         }
-    }, [user, router]);
+    }, [_hasHydrated, user, router]);
 
-    if (!hydrated) {
-        return <div>Loading...</div>;
-    }
-
-    if (!user) {
-        return null;
+    if (!_hasHydrated) {
+        return <Loading />;
     }
 
     return (

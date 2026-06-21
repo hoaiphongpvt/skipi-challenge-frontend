@@ -9,14 +9,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
+    modal,
 }: Readonly<{
     children: React.ReactNode;
+    modal: React.ReactNode;
 }>) {
     return (
         <html lang="en">
             <body style={{ height: '100vh', overflow: 'hidden' }}>
                 <Toaster richColors position="top-right" />
-                <Provider>{children}</Provider>
+                <Provider>
+                    {children}
+                    {modal}
+                </Provider>
             </body>
         </html>
     );

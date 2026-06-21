@@ -1,7 +1,5 @@
 function Page() {
-    return ( 
-        <p>Lesson</p>
-     );
+    return <p>Lesson</p>;
 }
 
 export default Page;

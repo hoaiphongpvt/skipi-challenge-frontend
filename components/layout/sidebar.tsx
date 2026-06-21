@@ -11,7 +11,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 function SidebarComponent() {
     const user = useUserStore((state) => state.user);
-    const router = useRouter()
+    const router = useRouter();
     const pathname = usePathname();
 
     const items = [
@@ -20,33 +20,36 @@ function SidebarComponent() {
             label: 'Dashboard',
             icon: <HomeOutlined />,
             role: ['instructor', 'student'],
-            link: '/dashboard'
+            link: '/dashboard',
         },
         {
             key: 'students',
             label: 'Manage Students',
             icon: <UserOutlined />,
             role: ['instructor'],
-            link: '/students'
+            link: '/students',
         },
         {
             key: 'lessons',
             label:
-            user?.role === "instructor"
-                ? "Manage Lessons"
-                : "My Lessons",
+                user?.role === 'instructor' ? 'Manage Lessons' : 'My Lessons',
             icon: <BookOutlined />,
             role: ['instructor', 'student'],
-            link: '/lessons'
+            link: '/lessons',
         },
         {
             key: 'messages',
             label: 'Messages',
             icon: <MessageOutlined />,
             role: ['instructor', 'student'],
-            link: '/messages'
+            link: '/messages',
         },
     ];
+
+    const matchedItem = items?.find(
+        (item) => item && pathname.includes(item.key)
+    );
+    const activeKey = matchedItem ? (matchedItem.key as string) : 'dashboard';
 
     const menuItems = items.filter((item) =>
         item.role.includes(user?.role ?? '')
@@ -67,13 +70,11 @@ function SidebarComponent() {
         >
             <Menu
                 mode="inline"
-                selectedKeys={[pathname.split("/").pop() as string]}
+                selectedKeys={[activeKey]}
                 style={{ height: '100%', borderRight: 0, paddingTop: 16 }}
                 items={menuItems}
                 onClick={({ key }) => {
-                    const item = menuItems.find(
-                        item => item.key === key
-                    );
+                    const item = menuItems.find((item) => item.key === key);
 
                     if (item) {
                         router.push(item.link);
