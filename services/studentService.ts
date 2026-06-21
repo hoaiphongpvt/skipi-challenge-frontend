@@ -1,10 +1,16 @@
 import { API, API_ROOT } from '@/constants/api';
 import api from './api';
 
-export const getAllStudents = async () => {
-    const respone = await api.get(API_ROOT + API.STUDENT.GET_ALL);
+export const getAllStudents = async (data: {
+    page: number;
+    limit: number;
+    search: string;
+}) => {
+    const response = await api.get(API_ROOT + API.STUDENT.GET_ALL, {
+        params: data,
+    });
 
-    return respone.data;
+    return response.data;
 };
 
 export const getStudentByPhone = async (data: { phone: string }) => {

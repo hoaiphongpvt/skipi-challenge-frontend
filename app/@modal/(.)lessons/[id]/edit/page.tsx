@@ -23,10 +23,10 @@ export default function Page() {
         router.back();
     };
 
-    const { isPending: isGettingLesson, data} = useQuery({
+    const { isPending: isGettingLesson, data } = useQuery({
         queryKey: ['lesson', 'lessonId'],
-        queryFn: () => getLessonById({id})
-    })
+        queryFn: () => getLessonById({ id }),
+    });
 
     const editLessontMutation = useMutation({
         mutationFn: editLesson,
@@ -48,20 +48,20 @@ export default function Page() {
     const onFinish = (values: { name: string; description: string }) => {
         mutate({
             id,
-            ...values
+            ...values,
         });
     };
 
-     useEffect(() => {
-            if (data) {
-                form.setFieldsValue({
-                    name: data.data.name,
-                    description: data.data.description,
-                });
-            }
-        }, [data, form]);
+    useEffect(() => {
+        if (data) {
+            form.setFieldsValue({
+                name: data.data.name,
+                description: data.data.description,
+            });
+        }
+    }, [data, form]);
 
-    if (isGettingLesson) return <Loading />
+    if (isGettingLesson) return <Loading />;
     return (
         <Modal
             open={isOpen}

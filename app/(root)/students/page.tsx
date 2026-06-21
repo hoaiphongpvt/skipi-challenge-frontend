@@ -7,14 +7,40 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllStudents } from '@/services/studentService';
 import convertToVNTime from '@/utils/convertVNTime';
 import Loading from '@/components/ui/loading';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { StudentType } from '@/constants/const';
+import { useEffect, useState } from 'react';
 
 export default function ManageStudentsPage() {
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    
+    const [inputValue, setInputValue] = useState(searchParams.get('search') || '');
+    const [search, setSearch] = useState(searchParams.get('search') || '');
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setSearch(inputValue);
+            setPage(1);
+
+            const params = new URLSearchParams(window.location.search);
+            if (inputValue.trim()) {
+                params.set('search', inputValue);
+            } else {
+                params.delete('search');
+            }
+            router.replace(`${pathname}?${params.toString()}`);
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [inputValue, pathname, router]);
+
     const { isPending, data } = useQuery({
-        queryKey: ['students'],
-        queryFn: getAllStudents,
+        queryKey: ['students', page, limit, search],
+        queryFn: () => getAllStudents({ page, limit, search }),
     });
 
     if (isPending) return <Loading />;
@@ -150,13 +176,15 @@ export default function ManageStudentsPage() {
 
                     <Input
                         prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                        placeholder="Fillter"
+                        placeholder="Filter by name..."
                         style={{
-                            width: '160px',
+                            width: '240px',
                             height: '40px',
                             borderRadius: 6,
                             borderColor: '#d9d9d9',
                         }}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        value={inputValue}
                     />
                 </div>
             </div>
@@ -164,10 +192,19 @@ export default function ManageStudentsPage() {
             <Table
                 dataSource={data.data.students}
                 columns={columns}
-                pagination={false}
                 rowKey="id"
                 style={{
                     borderTop: '1px solid #f0f0f0',
+                }}
+                pagination={{
+                    current: page,
+                    pageSize: limit,
+                    total: data?.data?.total || 0,
+                    showSizeChanger: true,
+                    onChange: (currentPage, pageSize) => {
+                        setPage(currentPage);
+                        setLimit(pageSize);
+                    },
                 }}
                 components={{
                     header: {

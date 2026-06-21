@@ -28,7 +28,7 @@ export default function Page() {
             if (res?.success) {
                 toast.success('Deleted lesson successfully');
                 queryClient.invalidateQueries({ queryKey: ['lessons'] });
-                router.back()
+                router.back();
             }
         },
         onError: (err) => {
