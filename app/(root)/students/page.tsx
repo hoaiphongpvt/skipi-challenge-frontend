@@ -8,14 +8,7 @@ import { getAllStudents } from '@/services/studentService';
 import convertToVNTime from '@/utils/convertVNTime';
 import Loading from '@/components/ui/loading';
 import { useRouter } from 'next/navigation';
-
-interface StudentType {
-    key: string;
-    name: string;
-    email: string;
-    phone: string;
-    createAt: string;
-}
+import { StudentType } from '@/constants/const';
 
 export default function ManageStudentsPage() {
     const router = useRouter();

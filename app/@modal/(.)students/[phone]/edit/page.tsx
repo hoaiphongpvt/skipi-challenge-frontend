@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Page() {
-    const { phone: studentPhone } = useParams<{phone: string}>()
+    const { phone: studentPhone } = useParams<{ phone: string }>();
     const router = useRouter();
     const queryClient = useQueryClient();
     const [form] = Form.useForm();
@@ -22,13 +22,13 @@ export default function Page() {
         router.back();
     };
 
-    const { isPending: isLoadingStudent, data} = useQuery({
+    const { isPending: isLoadingStudent, data } = useQuery({
         queryKey: ['student', studentPhone],
         queryFn: () => getStudentByPhone({ phone: studentPhone }),
         enabled: !!studentPhone,
-    })
+    });
 
-     const editStudentMutation = useMutation({
+    const editStudentMutation = useMutation({
         mutationFn: editStudent,
         onSuccess: (data) => {
             if (data.success) {
@@ -56,8 +56,8 @@ export default function Page() {
         }
     }, [data, form]);
 
-    if (isLoadingStudent) return <Loading />
-    const { isPending, mutate} = editStudentMutation
+    if (isLoadingStudent) return <Loading />;
+    const { isPending, mutate } = editStudentMutation;
 
     const onFinish = (values: {
         name: string;
@@ -65,7 +65,7 @@ export default function Page() {
         email: string;
         role: string;
     }) => {
-       mutate(values)
+        mutate(values);
     };
     return (
         <Modal

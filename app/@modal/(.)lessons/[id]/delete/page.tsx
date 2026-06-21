@@ -2,34 +2,40 @@
 
 import Loading from '@/components/ui/loading';
 import { ErrorResponse } from '@/constants/const';
-import { deleteStudent, getStudentByPhone } from '@/services/studentService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Space, Typography, Layout } from 'antd';
+import { Modal, Button, Space, Typography } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { deleteLesson, getLessonById } from '@/services/lessonService';
 
 const { Text, Title } = Typography;
 
 export default function Page() {
-    const { phone: studentPhone } = useParams<{ phone: string }>();
+    const { id } = useParams<{ id: string }>();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const [isOpen, setIsOpen] = useState(true);
 
-    const { isPending: isLoadingStudent, data } = useQuery({
-        queryKey: ['student', studentPhone],
-        queryFn: () => getStudentByPhone({ phone: studentPhone }),
-        enabled: !!studentPhone,
+    const handleClose = () => {
+        setIsOpen(false);
+        router.back();
+    };
+
+    const { isPending: isLoadingLesson, data } = useQuery({
+        queryKey: ['lesson', 'lessonId'],
+        queryFn: () => getLessonById({ id }),
     });
 
-    const deleteStudentMutation = useMutation({
-        mutationFn: () => deleteStudent({ phone: studentPhone }),
+    const deleteLessonMutation = useMutation({
+        mutationFn: () => deleteLesson({ id }),
         onSuccess: (res) => {
             if (res?.success) {
-                toast.success('Deleted student successfully');
-                queryClient.invalidateQueries({ queryKey: ['students'] });
-                router.back();
+                toast.success('Deleted lesson successfully');
+                queryClient.invalidateQueries({ queryKey: ['lessons'] });
+                handleClose();
             }
         },
         onError: (err) => {
@@ -40,25 +46,23 @@ export default function Page() {
         },
     });
 
-    if (isLoadingStudent) return <Loading />;
+    if (isLoadingLesson) return <Loading />;
 
-    const { isPending, mutate } = deleteStudentMutation;
+    const { isPending, mutate } = deleteLessonMutation;
 
-    const studentInfo = data?.data ? data.data : data;
+    const lessonInfo = data?.data ? data.data : data;
 
     const handleDelete = () => {
         mutate();
     };
 
     return (
-        <Layout
-            style={{
-                background: '#fff',
-                padding: '32px',
-                borderRadius: 16,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                minHeight: 'calc(100vh - 112px)',
-            }}
+        <Modal
+            open={isOpen}
+            footer={null}
+            width={460}
+            centered
+            onCancel={handleClose}
         >
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 <ExclamationCircleFilled
@@ -94,7 +98,7 @@ export default function Page() {
                 >
                     Are you sure you want to delete this student?
                 </Text>
-                {studentInfo?.name && (
+                {lessonInfo?.name && (
                     <Text
                         strong
                         style={{
@@ -104,7 +108,7 @@ export default function Page() {
                             display: 'block',
                         }}
                     >
-                        {studentInfo.name} ({studentPhone})
+                        {lessonInfo.name}
                     </Text>
                 )}
                 <Text
@@ -122,6 +126,18 @@ export default function Page() {
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Space size="middle">
                     <Button
+                        onClick={handleClose}
+                        style={{
+                            height: '40px',
+                            padding: '0 24px',
+                            borderRadius: '6px',
+                            fontWeight: 500,
+                            color: '#595959',
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
                         type="primary"
                         danger
                         loading={isPending}
@@ -138,6 +154,6 @@ export default function Page() {
                     </Button>
                 </Space>
             </div>
-        </Layout>
+        </Modal>
     );
 }

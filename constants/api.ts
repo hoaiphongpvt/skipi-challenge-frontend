@@ -20,9 +20,9 @@ export const API = {
     LESSON: {
         GET_ALL: '/lessons',
         GET_BY_ID: '/lessons/:id',
-        CREATE: 'lessons',
-        EDIT: 'lessons/:id',
-        DELETE: 'lessons/:id',
-        ASSIGN: 'lessons/assignLesson',
+        CREATE: '/lessons',
+        EDIT: '/lessons/:id',
+        DELETE: '/lessons/:id',
+        ASSIGN: '/lessons/assignLesson',
     },
 };

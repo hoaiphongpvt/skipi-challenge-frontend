@@ -2,34 +2,33 @@
 
 import Loading from '@/components/ui/loading';
 import { ErrorResponse } from '@/constants/const';
-import { deleteStudent, getStudentByPhone } from '@/services/studentService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Space, Typography, Layout } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { deleteLesson, getLessonById } from '@/services/lessonService';
 
 const { Text, Title } = Typography;
 
 export default function Page() {
-    const { phone: studentPhone } = useParams<{ phone: string }>();
+    const { id } = useParams<{ id: string }>();
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const { isPending: isLoadingStudent, data } = useQuery({
-        queryKey: ['student', studentPhone],
-        queryFn: () => getStudentByPhone({ phone: studentPhone }),
-        enabled: !!studentPhone,
+    const { isPending: isLoadingLesson, data } = useQuery({
+        queryKey: ['lesson', 'lessonId'],
+        queryFn: () => getLessonById({ id }),
     });
 
-    const deleteStudentMutation = useMutation({
-        mutationFn: () => deleteStudent({ phone: studentPhone }),
+    const deleteLessonMutation = useMutation({
+        mutationFn: () => deleteLesson({ id }),
         onSuccess: (res) => {
             if (res?.success) {
-                toast.success('Deleted student successfully');
-                queryClient.invalidateQueries({ queryKey: ['students'] });
-                router.back();
+                toast.success('Deleted lesson successfully');
+                queryClient.invalidateQueries({ queryKey: ['lessons'] });
+                router.back()
             }
         },
         onError: (err) => {
@@ -40,11 +39,11 @@ export default function Page() {
         },
     });
 
-    if (isLoadingStudent) return <Loading />;
+    if (isLoadingLesson) return <Loading />;
 
-    const { isPending, mutate } = deleteStudentMutation;
+    const { isPending, mutate } = deleteLessonMutation;
 
-    const studentInfo = data?.data ? data.data : data;
+    const lessonInfo = data?.data ? data.data : data;
 
     const handleDelete = () => {
         mutate();
@@ -72,7 +71,7 @@ export default function Page() {
                     level={4}
                     style={{ margin: 0, fontWeight: 600, color: '#1f1f1f' }}
                 >
-                    Delete Student
+                    Delete Lesson
                 </Title>
             </div>
 
@@ -92,9 +91,9 @@ export default function Page() {
                         display: 'block',
                     }}
                 >
-                    Are you sure you want to delete this student?
+                    Are you sure you want to delete this lesson?
                 </Text>
-                {studentInfo?.name && (
+                {lessonInfo?.name && (
                     <Text
                         strong
                         style={{
@@ -104,7 +103,7 @@ export default function Page() {
                             display: 'block',
                         }}
                     >
-                        {studentInfo.name} ({studentPhone})
+                        {lessonInfo.name}
                     </Text>
                 )}
                 <Text
