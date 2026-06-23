@@ -15,8 +15,10 @@ export default function ManageStudentsPage() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    
-    const [inputValue, setInputValue] = useState(searchParams.get('search') || '');
+
+    const [inputValue, setInputValue] = useState(
+        searchParams.get('search') || ''
+    );
     const [search, setSearch] = useState(searchParams.get('search') || '');
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);

@@ -35,7 +35,7 @@ function HeaderComponent() {
                 alignItems: 'center',
                 borderBottom: '1px solid #f0f0f0',
                 height: 64,
-                position: 'sticky',
+                position: 'fixed',
                 top: 0,
                 zIndex: 1000,
                 width: '100%',

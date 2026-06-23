@@ -23,6 +23,8 @@ export const API = {
         CREATE: '/lessons',
         EDIT: '/lessons/:id',
         DELETE: '/lessons/:id',
+        GET_ASSINGED: '/lessons/assignedLessons',
         ASSIGN: '/lessons/assignLesson',
+        ASSIGNMENT_STAT: '/lessons/statistics',
     },
 };

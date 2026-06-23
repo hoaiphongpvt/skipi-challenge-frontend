@@ -19,7 +19,11 @@ export default function Page() {
         onSuccess: (data) => {
             if (data.success) {
                 setUser(data.data.user);
-                router.push('/dashboard');
+                if (data.data.user.role === 'instructor') {
+                    router.push('/students');
+                } else {
+                    router.push('/lessons/my-lesson');
+                }
             } else {
                 toast.error(data.message);
             }

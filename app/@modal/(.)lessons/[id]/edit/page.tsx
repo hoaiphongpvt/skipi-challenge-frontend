@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Form, Input, Modal, Button, Row, Col } from 'antd';
 import { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
-import { describe } from 'node:test';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -24,7 +23,7 @@ export default function Page() {
     };
 
     const { isPending: isGettingLesson, data } = useQuery({
-        queryKey: ['lesson', 'lessonId'],
+        queryKey: ['lesson', id],
         queryFn: () => getLessonById({ id }),
     });
 

@@ -1,6 +1,7 @@
 import Sider from 'antd/es/layout/Sider';
 import {
     BookOutlined,
+    FileAddOutlined,
     HomeOutlined,
     MessageOutlined,
     UserOutlined,
@@ -16,29 +17,35 @@ function SidebarComponent() {
 
     const items = [
         {
-            key: 'dashboard',
-            label: 'Dashboard',
-            icon: <HomeOutlined />,
-            role: ['instructor', 'student'],
-            link: '/dashboard',
-        },
-        {
-            key: 'students',
+            key: '/students',
             label: 'Manage Students',
             icon: <UserOutlined />,
             role: ['instructor'],
             link: '/students',
         },
         {
-            key: 'lessons',
-            label:
-                user?.role === 'instructor' ? 'Manage Lessons' : 'My Lessons',
+            key: '/lessons',
+            label: 'Manage Lessons',
             icon: <BookOutlined />,
-            role: ['instructor', 'student'],
+            role: ['instructor'],
             link: '/lessons',
         },
         {
-            key: 'messages',
+            key: '/lessons/my-lesson',
+            label: 'My Lessons',
+            icon: <BookOutlined />,
+            role: ['student'],
+            link: '/lessons/my-lesson',
+        },
+        {
+            key: '/lessons/assign-lesson',
+            label: 'Assign Lessons',
+            icon: <FileAddOutlined />,
+            role: ['instructor'],
+            link: '/lessons/assign-lesson',
+        },
+        {
+            key: '/messages',
             label: 'Messages',
             icon: <MessageOutlined />,
             role: ['instructor', 'student'],
@@ -46,10 +53,10 @@ function SidebarComponent() {
         },
     ];
 
-    const matchedItem = items?.find(
-        (item) => item && pathname.includes(item.key)
-    );
-    const activeKey = matchedItem ? (matchedItem.key as string) : 'dashboard';
+    const activeKey =
+        [...items]
+            .sort((a, b) => b.link.length - a.link.length)
+            .find((item) => pathname.startsWith(item.link))?.key || '';
 
     const menuItems = items.filter((item) =>
         item.role.includes(user?.role ?? '')

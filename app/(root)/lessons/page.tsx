@@ -9,12 +9,16 @@ import { useRouter } from 'next/navigation';
 import { getAllLessons } from '@/services/lessonService';
 import convertToVNTime from '@/utils/convertVNTime';
 import { LessonType } from '@/constants/const';
+import { useState } from 'react';
 
 export default function ManageLessonsPage() {
     const router = useRouter();
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
     const { isPending, data } = useQuery({
-        queryKey: ['lessons'],
-        queryFn: getAllLessons,
+        queryKey: ['lessons', page, limit],
+        queryFn: () => getAllLessons({ page, limit }),
     });
 
     if (isPending) return <Loading />;
@@ -140,24 +144,22 @@ export default function ManageLessonsPage() {
                     >
                         Add New Lesson
                     </Button>
-
-                    <Input
-                        prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                        placeholder="Fillter"
-                        style={{
-                            width: '160px',
-                            height: '40px',
-                            borderRadius: 6,
-                            borderColor: '#d9d9d9',
-                        }}
-                    />
                 </div>
             </div>
 
             <Table
                 dataSource={data?.data?.lessons}
                 columns={columns}
-                pagination={false}
+                pagination={{
+                    current: page,
+                    pageSize: limit,
+                    total: data?.data?.total || 0,
+                    showSizeChanger: true,
+                    onChange: (currentPage, pageSize) => {
+                        setPage(currentPage);
+                        setLimit(pageSize);
+                    },
+                }}
                 rowKey="id"
                 style={{
                     borderTop: '1px solid #f0f0f0',
